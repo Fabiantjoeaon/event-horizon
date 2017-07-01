@@ -1,0 +1,36 @@
+{
+  "name": "event-horizon",
+  "version": "1.0.0",
+  "description": "WebGL Demo",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://Fabiantjoeaon@github.com/Fabiantjoeaon/event-horizon.git"
+  },
+  "keywords": [
+    "WebGL",
+    "WhiteStorm",
+    "WHS",
+    "Threejs"
+  ],
+  "author": "Fabian Tjoe-A-On",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Fabiantjoeaon/event-horizon/issues"
+  },
+  "homepage": "https://github.com/Fabiantjoeaon/event-horizon#readme",
+  "devDependencies": {
+    "autoprefixer": "^7.1.1",
+    "babel-loader": "^7.1.1",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "css-loader": "^0.28.4",
+    "extract-text-webpack-plugin": "^2.1.2",
+    "postcss-loader": "^2.0.6",
+    "sass-loader": "^6.0.6",
+    "webpack": "^3.0.0"
+  }
+}
