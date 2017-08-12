@@ -2,6 +2,7 @@ import {
     Vector3, 
     Points, 
     BufferGeometry,
+    BufferAttribute,
     Geometry, 
     Color, 
     PointsMaterial,
@@ -20,9 +21,9 @@ import blackHoleFragmentShader from './shaders/blackHole/fragment.glsl';
 export default class BlackHoleCircle extends MeshComponent {
     static defaults = {
         colors: [ 0x474fab, 0xff0080, 0x8000ff, 0x7e0d7b, 0x9d9d9d],
-        pointAmount: 10000,
+        particles: 10000,
         radius: 25,
-        geometry: new Geometry(),
+        geometry: new BufferGeometry(),
         material: new ShaderMaterial({
             vertexShader: blackHoleVertexShader,
             fragmentShader: blackHoleFragmentShader
@@ -56,22 +57,39 @@ export default class BlackHoleCircle extends MeshComponent {
     }
 
     generatePoints() {
-        const {colors, pointAmount, geometry, material} =
+        const {particles, geometry, material, radius} =
             BlackHoleCircle.defaults;
 
-        // this.position = new Vector3(0,0,-600);
-        times(pointAmount, i => {
-            geometry.colors.push(
-                new Color(
-                    colors[
-                        Math.floor( Math.random() * colors.length )
-                    ]   
-                )
-            )
-            // material.uniforms.vPosition.value = this.generatePoint(i);
-            geometry.vertices.push(this.generatePoint(i));
-            
-        });
+        const positions = new Float32Array(particles * 3);
+        const colors = new Float32Array(particles * 3);
+        const sizes = new Float32Array(particles);
+        
+        const color = new Color();
+
+        // HINT: You need i3 to skip over 2 values, so that you can set xyz, and rgb
+        // with a normal iterator it is not possible to skip,
+        // and with i3 you can get the following array values with + 0, 1, and 2
+        for ( let i = 0, i3 = 0; i < particles; i ++, i3 += 3 ) {
+            positions[i3 + 0] = radius * Math.sin((i) / (Math.PI * 2));
+            positions[i3 + 1] = radius * Math.cos((i) / (Math.PI * 2));
+            positions[i3 + 2] = randomFloatInRange(
+                randomFloatInRange(0, 30),
+                randomFloatInRange(0, 50)
+            );
+
+            color.setHSL(i / particles, 1.0, 0.5);
+
+            colors[i3 + 0] = color.r;
+            colors[i3 + 1] = color.g;
+            colors[i3 + 2] = color.b;
+
+            sizes[i] = 10;
+        }
+
+        // HINT: Set attributes to that these are accesible inside shaders
+        geometry.addAttribute('position', new BufferAttribute(positions, 3));
+        geometry.addAttribute('customColor', new BufferAttribute(positions, 3));
+        geometry.addAttribute('size', new BufferAttribute(sizes, 1));
     }
     //TODO: rotate point around own axis function
     build() {
