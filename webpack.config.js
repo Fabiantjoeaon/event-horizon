@@ -11,8 +11,9 @@ const javascript = {
   test: /\.(js)$/, 
   use: [{
     loader: 'babel-loader',
-    options: { presets: ['es2015', 'stage-0'] },
-    query: {compact: false}
+    options: { 
+        presets: ['es2015', 'stage-0', {compact: false}],
+    },
   }],
 };
 
@@ -33,16 +34,26 @@ const uglify = new webpack.optimize.UglifyJsPlugin({
   compress: { warnings: false }
 });
 
+const glsl = {
+  test: /\.glsl$/,
+  loader: 'webpack-glsl-loader'
+}
+
 const config = {
   entry: {
     App: `${SRC_DIR}/App.js`
   },
   output: {
     path: BUILD_DIR,
+    devtoolLineToLine: true,
     filename: 'bundle.js'
   },
   module: {
-    rules: [javascript, styles]
+    rules: [
+      javascript, 
+      styles,
+      glsl
+    ]
   },
   plugins: [
     new ExtractTextPlugin('style.css'),
