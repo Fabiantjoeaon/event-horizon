@@ -1,9 +1,9 @@
 
-// attribute vec3 customColor;
-// varying vec3 vColor;
+attribute vec3 customColor;
+varying vec3 vColor;
 void main() 
 {
-	// vColor = customColor; 
+	vColor = customColor; 
 	vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
 
 	// option (1): draw particles at constant size on screen
