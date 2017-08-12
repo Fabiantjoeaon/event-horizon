@@ -10,31 +10,60 @@ import {
     Mesh,
     AdditiveBlending,
     VertexColors,
+    TextureLoader
 } from 'three';
 import {MeshComponent} from 'whs';
 import times from 'lodash/times';
 
-import {randomFloatInRange} from './helpers/MathHelper';
+import {randomFloatInRange, normalizeOneZero, normalizeInRange} from './helpers/MathHelper';
 import blackHoleVertexShader from './shaders/blackHole/vertex.glsl';
 import blackHoleFragmentShader from './shaders/blackHole/fragment.glsl';
 
 export default class BlackHoleCircle extends MeshComponent {
     static defaults = {
-        colors: [ 0x474fab, 0xff0080, 0x8000ff, 0x7e0d7b, 0x9d9d9d],
+        colorsArray: [
+            [
+                .768,
+                .47,
+                .81
+            ],
+            [
+                .8,
+                .70,
+                .80
+            ],
+            [   
+                700,
+                0.8,
+                0.734
+            ],
+            [
+                880,
+                .81,
+                .67
+            ],
+            [
+                0,
+                0,
+                .73
+            ]
+        ],
         particles: 10000,
         radius: 25,
         geometry: new BufferGeometry(),
         material: new ShaderMaterial({
             vertexShader: blackHoleVertexShader,
-            fragmentShader: blackHoleFragmentShader
-        }),
-        // material: new PointsMaterial({
-        //     size: 0.1,
-        //     blending: AdditiveBlending,
-        //     opacity: 0.5,
-        //     vertexColors: VertexColors, 
-        //     depthTest: false, 
-        // })
+            fragmentShader: blackHoleFragmentShader,
+            uniforms: {
+                // time: window.customUniforms.time,
+                texture: {
+                    value: new TextureLoader().load( './assets/spark1.png')
+                }
+            },
+            blending: AdditiveBlending,
+            depthTest:      false,
+            transparent:    true
+        })
     }
     constructor() {
         //FIXME: bind to this instead of statics
@@ -57,7 +86,7 @@ export default class BlackHoleCircle extends MeshComponent {
     }
 
     generatePoints() {
-        const {particles, geometry, material, radius} =
+        const {colorsArray,particles, geometry, material, radius} =
             BlackHoleCircle.defaults;
 
         const positions = new Float32Array(particles * 3);
@@ -77,7 +106,9 @@ export default class BlackHoleCircle extends MeshComponent {
                 randomFloatInRange(0, 50)
             );
 
-            color.setHSL(i / particles, 1.0, 0.5);
+            color.setHSL(
+                ...colorsArray[Math.floor(Math.random()*colorsArray.length)]
+            );
 
             colors[i3 + 0] = color.r;
             colors[i3 + 1] = color.g;
@@ -88,13 +119,14 @@ export default class BlackHoleCircle extends MeshComponent {
 
         // HINT: Set attributes to that these are accesible inside shaders
         geometry.addAttribute('position', new BufferAttribute(positions, 3));
-        geometry.addAttribute('customColor', new BufferAttribute(positions, 3));
+        geometry.addAttribute('customColor', new BufferAttribute(colors, 3));
         geometry.addAttribute('size', new BufferAttribute(sizes, 1));
     }
     //TODO: rotate point around own axis function
     build() {
         this.generatePoints();
         const {geometry, material} = BlackHoleCircle.defaults;
+        material.uniforms.time = window.customUniforms.time;
         return new Points(
             geometry,
             material

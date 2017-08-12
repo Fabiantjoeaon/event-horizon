@@ -1,9 +1,10 @@
 
-varying vec3 vColor; // colors associated to vertices; assigned by vertex shader
+varying vec3 vColor;
+uniform sampler2D texture;
+uniform float time;
+
 void main() 
 {
-	// calculates a color for the particle
-	gl_FragColor = vec4( vColor, 1.0 );
-  // gl_FragColor = vec4( 0.5, 0.0, 1.0, 1.0 );
-	
+		gl_FragColor = vec4( vColor, 1.0 ) * time;
+		gl_FragColor = gl_FragColor * texture2D(texture, gl_PointCoord);
 }

@@ -15,13 +15,17 @@ import {
 
 import times from 'lodash/times';
 
-import { Vector3, MeshBasicMaterial} from 'three';
+import { Clock, Vector3, MeshBasicMaterial} from 'three';
 
 import TweenMax from 'gsap';
 import {randomFloatInRange} from './helpers/MathHelper';
 
 import BlackHoleCircle from './BlackHoleCircle';
 import StarField from './StarField';
+
+window.customUniforms = {
+    time: { type: "f", value: 1.0 }
+}
 
 const camera = new PerspectiveCamera({
         z: 45,
@@ -30,6 +34,7 @@ const camera = new PerspectiveCamera({
         far: 10000,
         position: new Vector3(0,0,50),
     });
+const clock = new Clock();
 
 const mouse = new VirtualMouseModule();
 
@@ -81,25 +86,28 @@ ambientLight.addTo(app);
 blackHole.addTo(app);
 starField.addTo(app);
 eventHorizon.addTo(app)
-
+console.log(blackHole.geometry)
 const loop = new Loop(clock => {
-    const intersects = mouse.intersection(blackHole);
+    var delta = clock.getDelta();
+    window.customUniforms.time.value += delta;
 
-    times(intersects.length, (i) => {
-        const point = blackHole.geometry.vertices[
-            intersects[i].index
-        ];
-        TweenMax.to(point, 1.6, { 
-            x: point.x + randomFloatInRange(0, 5), 
-            y: point.y + randomFloatInRange(0, 5), 
-            z: point.z + randomFloatInRange(0, 5),
-            // ease: SlowMo.ease.config(0.5, 0.3, false), 
-            // ease: Elastic.easeOut.config(1, 0.3),
-            ease: Power4.easeOut,
-            repeat: 1,
-            yoyo: true
-        });
-    });
+    // const intersects = mouse.intersection(blackHole);
+
+    // times(intersects.length, (i) => {
+    //     const point = blackHole.geometry.vertices[
+    //         intersects[i].index
+    //     ];
+    //     TweenMax.to(point, 1.6, { 
+    //         x: point.x + randomFloatInRange(0, 5), 
+    //         y: point.y + randomFloatInRange(0, 5), 
+    //         z: point.z + randomFloatInRange(0, 5),
+    //         // ease: SlowMo.ease.config(0.5, 0.3, false), 
+    //         // ease: Elastic.easeOut.config(1, 0.3),
+    //         ease: Power4.easeOut,
+    //         repeat: 1,
+    //         yoyo: true
+    //     });
+    // });
     
     const rotateX = mouse.mouse.y / 500;
     const rotateY = mouse.mouse.x / 500;

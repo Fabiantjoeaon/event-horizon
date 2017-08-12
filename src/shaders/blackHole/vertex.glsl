@@ -9,6 +9,6 @@ void main()
 	// option (1): draw particles at constant size on screen
 	// gl_PointSize = size;
     // option (2): scale particles as objects in 3D space
-	gl_PointSize = 0.4 * ( 300.0 / length( mvPosition.xyz ) );
+	gl_PointSize = 3.0 * ( 300.0 / length( mvPosition.xyz ) );
 	gl_Position = projectionMatrix * mvPosition;
 }
